@@ -26,5 +26,13 @@ const app = new Vue({
 const map = L.mapbox.map('map', 'mapbox.streets').setView([48.14, 17.108], 13);
 
 $.getJSON("api/points", function(json) {
-    L.geoJson(json).addTo(map);
+    var layer = L.mapbox.featureLayer(json).addTo(map);
+
+    layer.on('click', function(e) {
+        e.layer.openPopup();
+    });
+
+    layer.on('mouseout', function(e) {
+        e.layer.closePopup();
+    });
 });

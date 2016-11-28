@@ -19,7 +19,14 @@ Route::get('/user', function (Request $request) {
 */
 
 Route::get('points', function (Request $request) {
-    $points = DB::select("SELECT ST_AsGeoJSON(st_transform(way, 4326)) FROM planet_osm_point WHERE planet_osm_point.amenity='restaurant' LIMIT 1;");
+    $points = DB::select("SELECT ST_AsGeoJSON(st_transform(way, 4326)) AS geojson FROM planet_osm_point WHERE planet_osm_point.amenity='restaurant';");
 
-    return $points[0]->st_asgeojson;
+    foreach ($points as $point) {
+        $data[] = [
+            'type' => 'Feature',
+            'geometry' => json_decode($point->geojson)
+        ];
+    }
+
+    return $data;
 });
