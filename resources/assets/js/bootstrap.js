@@ -10,6 +10,12 @@ window._ = require('lodash');
 window.$ = window.jQuery = require('jquery');
 require('bootstrap-sass');
 
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
  * using reactive data binding and reusable components. Vue's API is clean
@@ -26,7 +32,10 @@ require('vue-resource');
  */
 
 Vue.http.interceptors.push((request, next) => {
-    request.headers.set('X-CSRF-TOKEN', Laravel.csrfToken);
+    request.headers.set(
+        'X-CSRF-TOKEN',
+        $('meta[name="csrf-token"]').attr('content')
+    );
 
     next();
 });
@@ -43,3 +52,6 @@ Vue.http.interceptors.push((request, next) => {
 //     broadcaster: 'pusher',
 //     key: 'your-pusher-key'
 // });
+
+// require('mapbox.js');
+L.mapbox.accessToken = $('meta[name="mapbox-token"]').attr('content');

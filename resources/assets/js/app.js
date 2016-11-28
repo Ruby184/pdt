@@ -13,8 +13,18 @@ require('./bootstrap');
  * the application, or feel free to tweak this setup for your needs.
  */
 
-Vue.component('example', require('./components/Example.vue'));
+/*
+Vue.component('app-menu', require('./components/Menu.vue'));
+Vue.component('app-map', require('./components/Map.vue'));
+*/
 
 const app = new Vue({
     el: '#app'
+});
+
+
+const map = L.mapbox.map('map', 'mapbox.streets').setView([48.14, 17.108], 13);
+
+$.getJSON("api/points", function(json) {
+    L.geoJson(json).addTo(map);
 });
