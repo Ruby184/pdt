@@ -9,6 +9,10 @@ window._ = require('lodash');
 
 window.$ = window.jQuery = require('jquery');
 require('bootstrap-sass');
+require('bootstrap-switch');
+require('select2');
+
+$.fn.select2.defaults.set('theme', 'bootstrap');
 
 $.ajaxSetup({
     headers: {

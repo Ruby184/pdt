@@ -18,15 +18,5 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:api');
 */
 
-Route::get('points', function (Request $request) {
-    $points = DB::select("SELECT ST_AsGeoJSON(st_transform(way, 4326)) AS geojson FROM planet_osm_point WHERE planet_osm_point.amenity='restaurant';");
-
-    foreach ($points as $point) {
-        $data[] = [
-            'type' => 'Feature',
-            'geometry' => json_decode($point->geojson)
-        ];
-    }
-
-    return $data;
-});
+Route::get('points', 'ApiController@getPoints');
+Route::get('sections', 'ApiController@getSections');

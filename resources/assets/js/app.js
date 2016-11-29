@@ -22,17 +22,64 @@ const app = new Vue({
     el: '#app'
 });
 
+$('input[type="checkbox"]').bootstrapSwitch();
+$('select').select2();
 
 const map = L.mapbox.map('map', 'mapbox.streets').setView([48.14, 17.108], 13);
 
-$.getJSON("api/points", function(json) {
-    var layer = L.mapbox.featureLayer(json).addTo(map);
+var layer = L.mapbox.featureLayer().addTo(map);
 
-    layer.on('click', function(e) {
-        e.layer.openPopup();
+layer.on('click', function(e) {
+    e.layer.openPopup();
+});
+
+layer.on('mouseout', function(e) {
+    e.layer.closePopup();
+});
+
+var sections = L.mapbox.featureLayer().addTo(map);
+
+$('#show-sections').on('switchChange.bootstrapSwitch', function(event, state) {
+    if (state && !map.hasLayer(sections)) {
+        map.addLayer(sections);
+    } else if (!state && map.hasLayer(sections)) {
+        map.removeLayer(sections);
+    }
+});
+
+var position = L.mapbox.featureLayer().addTo(map);
+
+map.on('click', function(ev) {
+    var c = ev.latlng;
+
+    var geojson = {
+        type: 'FeatureCollection',
+        features: [
+            {
+                "type": "Feature",
+                "geometry": {
+                    "type": "Point",
+                    "coordinates": [c.lng, c.lat]
+                },
+                "properties": {
+                    "marker-color": "#ff8888",
+                    'marker-symbol': 'star'
+                }
+            }
+        ]
+    };
+
+    position.setGeoJSON(geojson);
+});
+
+$('#amenity').on('change', function(event) {
+    $.getJSON('api/points', { 'amenity': $(this).val() }, function(json) {
+        layer.setGeoJSON(json);
     });
+});
 
-    layer.on('mouseout', function(e) {
-        e.layer.closePopup();
+$('#sections').on('change', function(event) {
+    $.getJSON('api/sections', { 'name': $(this).val() }, function(json) {
+        sections.setGeoJSON(json);
     });
 });
