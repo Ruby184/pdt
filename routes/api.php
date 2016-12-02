@@ -20,3 +20,6 @@ Route::get('/user', function (Request $request) {
 
 Route::get('points', 'ApiController@getPoints');
 Route::get('sections', 'ApiController@getSections');
+Route::get('sections-select', 'ApiController@getSectionsSelect');
+Route::get('position/{lng}/{lat}/{distance}', 'ApiController@getPosition');
+Route::get('place/{lng}/{lat}/{vehicle?}', 'ApiController@getPlace');

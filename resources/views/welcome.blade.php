@@ -9,9 +9,10 @@
         <title>PDT</title>
         <link rel="stylesheet" href="{{ elixir('css/app.css') }}" />
         <link href="https://api.mapbox.com/mapbox.js/v3.0.1/mapbox.css" rel="stylesheet" />
-        <link href="http://www.bootstrap-switch.org/dist/css/bootstrap3/bootstrap-switch.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.2/css/bootstrap2/bootstrap-switch.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/select2-bootstrap-theme/0.1.0-beta.6/select2-bootstrap.min.css" rel="stylesheet" />
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
     </head>
     <body>
         <div id="app">
@@ -22,7 +23,7 @@
                             <h2>Kam večer</h2>
                             <form>
                                 <fieldset class="form-group">
-                                    <legend>Chcem ísť do</legend>
+                                    <legend>Chcem navštíviť</legend>
                                     <div class="form-group">
                                         <select multiple class="form-control" id="amenity">
                                             <option value="cinema">Kino</option>
@@ -35,55 +36,50 @@
                                         </select>
                                     </div>
                                 </fieldset>
+
                                 <fieldset class="form-group">
-                                    <legend>Filter</legend>
-                                    <div class="form-group">
-                                        <label class="sr-only" for="distance">Vzdialenosť (v kilometroch)</label>
-                                        <div class="input-group">
-                                            <input type="number" step="0.1" class="form-control" id="distance" value="5" placeholder="Vzdialenosť">
-                                            <div class="input-group-addon">km</div>
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a data-toggle="tab" href="#filter-sections"><span class="glyphicon glyphicon-search"></span> Mestské časti</a></li>
+                                        <li><a data-toggle="tab" href="#filter-position"><span class="glyphicon glyphicon-map-marker"></span> Pozícia na mape</a></li>
+                                    </ul>
+                                </fieldset>
+
+                                <div class="tab-content">
+                                    <div id="filter-sections" class="tab-pane fade in active">
+                                        <div class="form-group">
+                                            <select multiple class="form-control" id="sections">
+
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="checkbox" name="show-sections" id="show-sections" checked />
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="sections">Mestské časti</label>
-                                        <select multiple class="form-control" id="sections">
-                                            <option value="Staré Mesto">Staré Mesto</option>
-                                            <option value="Ružinov">Ružinov</option>
-                                            <option value="Vrakuňa">Vrakuňa</option>
-                                            <option value="Podunajské Biskupice">Podunajské Biskupice</option>
-                                            <option value="Nové Mesto">Nové Mesto</option>
-                                            <option value="Rača">Rača</option>
-                                            <option value="Vajnory">Vajnory</option>
-                                            <option value="Karlova Ves">Karlova Ves</option>
-                                            <option value="Dúbravka">Dúbravka</option>
-                                            <option value="Lamač">Lamač</option>
-                                            <option value="Devín">Devín</option>
-                                            <option value="Devínska Nová Ves">Devínska Nová Ves</option>
-                                            <option value="Záhorská Bystrica">Záhorská Bystrica</option>
-                                            <option value="Petržalka">Petržalka</option>
-                                            <option value="Jarovce">Jarovce</option>
-                                            <option value="Rusovce">Rusovce</option>
-                                            <option value="Čunovo">Čunovo</option>
-                                        </select>
+                                    <div id="filter-position" class="tab-pane fade">
+                                        <div class="form-group">
+                                            <label class="sr-only" for="distance">Vzdialenosť (v kilometroch)</label>
+                                            <div class="input-group">
+                                                <input type="number" min="0" step="0.1" class="form-control" id="distance" value="2" placeholder="Vzdialenosť">
+                                                <div class="input-group-addon">km</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <input type="checkbox" name="show-sections" id="show-sections" />
-                                </fieldset>
+                                </div>
+
                                 <fieldset class="form-group">
-                                    <legend>Pôjdem</legend>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios1" value="car" checked>
-                                            Autom (nájdi mi parkoviská)
+                                    <legend>Na presun chcem použiť</legend>
+                                    <div class="btn-group" data-toggle="buttons">
+                                        <label class="btn btn-primary active">
+                                            <i class="fa fa-car"></i>
+                                            <input type="radio" name="place" value="car" autocomplete="off" checked> Auto
                                         </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input type="radio" class="form-check-input" name="optionsRadios" id="optionsRadios2" value="bus">
-                                            MHD (nájdi mi zastávky)
+                                        <label class="btn btn-primary">
+                                            <i class="fa fa-bus"></i>
+                                            <input type="radio" name="place" value="bus" autocomplete="off"> MHD
                                         </label>
                                     </div>
                                 </fieldset>
-                                <input type="checkbox" name="show-trace" />
+                                <input type="checkbox" name="show-trace" id="show-trace" checked />
                             </form>
                         </div>
                     </div>

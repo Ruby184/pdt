@@ -23,11 +23,26 @@ const app = new Vue({
 });
 
 $('input[type="checkbox"]').bootstrapSwitch();
-$('select').select2();
+$('#amenity').select2();
+
+/*
+$('#sections').select2({
+    ajax: {
+        url: 'api/sections-select'
+    }
+});
+*/
+
+$.getJSON('api/sections-select', function(json) {
+    $('#sections').select2({
+        data: json
+    })
+});
 
 const map = L.mapbox.map('map', 'mapbox.streets').setView([48.14, 17.108], 13);
 
 var layer = L.mapbox.featureLayer().addTo(map);
+var place = L.mapbox.featureLayer().addTo(map);
 
 layer.on('click', function(e) {
     e.layer.openPopup();
@@ -47,10 +62,16 @@ $('#show-sections').on('switchChange.bootstrapSwitch', function(event, state) {
     }
 });
 
-var position = L.mapbox.featureLayer().addTo(map);
+var position = L.mapbox.featureLayer();
+var circleMarker;
+var latlng;
 
 map.on('click', function(ev) {
-    var c = ev.latlng;
+    if (!map.hasLayer(position)) {
+        return;
+    }
+
+    var c = latlng = ev.latlng;
 
     var geojson = {
         type: 'FeatureCollection',
@@ -70,16 +91,74 @@ map.on('click', function(ev) {
     };
 
     position.setGeoJSON(geojson);
+
+    $('#distance').trigger('change');
 });
 
-$('#amenity').on('change', function(event) {
-    $.getJSON('api/points', { 'amenity': $(this).val() }, function(json) {
+$('#amenity, #sections').on('change', function(event) {
+    layer.clearLayers();
+
+    $.getJSON('api/points', { 'amenity': $('#amenity').val(), 'sections': $('#sections').val() }, function(json) {
         layer.setGeoJSON(json);
     });
 });
 
 $('#sections').on('change', function(event) {
-    $.getJSON('api/sections', { 'name': $(this).val() }, function(json) {
+    $.getJSON('api/sections', { 'ids': $(this).val() }, function(json) {
         sections.setGeoJSON(json);
     });
+});
+
+$('#distance').on('change', function(event) {
+    layer.clearLayers();
+
+    if (circleMarker) {
+        circleMarker.remove();
+    }
+
+    if (latlng) {
+        $.getJSON(
+            'api/position/' + latlng.lng + '/' + latlng.lat + '/' + $(this).val() * 1000,
+            {
+                'amenity': $('#amenity').val()
+            },
+            function(json) {
+                layer.setGeoJSON(json);
+            }
+        );
+
+        circleMarker = L.circle([latlng.lat, latlng.lng], $(this).val() * 1000).addTo(map);
+    }
+});
+
+$('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    var target = $(e.target).attr('href') // activated tab
+
+    if (target == '#filter-sections') {
+        map.removeLayer(position);
+        map.addLayer(sections);
+
+        if (circleMarker) {
+            circleMarker.remove();
+        }
+
+        $('#sections').trigger('change');
+    } else if (target == '#filter-position') {
+        map.addLayer(position);
+        map.removeLayer(sections);
+
+        $('#distance').trigger('change');
+    }
+});
+
+layer.on('click', function(e) {
+    var vehicle = $('input[name="place"]:checked').val();
+
+    console.log('api/place/' + e.latlng.lng + '/' + e.latlng.lat + '/' + vehicle);
+
+    $.getJSON('api/place/' + e.latlng.lng + '/' + e.latlng.lat + '/' + vehicle,
+        function(json) {
+            place.setGeoJSON(json);
+        }
+    );
 });
